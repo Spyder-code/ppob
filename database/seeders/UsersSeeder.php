@@ -1,0 +1,193 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Support\Str;
+use Illuminate\Database\Seeder;
+
+class UsersSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        // \App\Models\User::truncate();
+        $user = [
+            [
+                'id' => '1',
+                'name' => 'Admin',
+                'role' => 'admin',
+                'status' => 'active',
+                'gender' => '-',
+                'phone' => '-',
+                'avatar' => 'admin.jpg',
+                'saldo' => 0,
+                'email' => 'admin@test.com',
+                'password' => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => '2021-07-09 20:19:13',
+            ],
+            [
+                'id' => '2',
+                'name' => 'Operator',
+                'role' => 'operator',
+                'status' => 'active',
+                'gender' => 'Pria',
+                'phone' => '085767113554',
+                'avatar' => 'operator.jpg',
+                'saldo' => 0,
+                'email' => 'operator@test.com',
+                'password' => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => '2021-07-09 20:19:13',
+            ],
+            [
+                'id' => '3',
+                'name' => 'Outlet',
+                'role' => 'outlet',
+                'status' => 'non-active',
+                'gender' => 'Pria',
+                'phone' => '085767113554',
+                'avatar' => 'outlet.jpg',
+                'saldo' => 0,
+                'email' => 'outlet@test.com',
+                'password' => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => '2021-07-09 20:19:13',
+            ],
+            [
+                'id' => '4',
+                'name' => 'Outlet2',
+                'role' => 'outlet',
+                'status' => 'non-active',
+                'gender' => 'Pria',
+                'phone' => '085767113554',
+                'avatar' => 'outlet.jpg',
+                'saldo' => 0,
+                'email' => 'outlet2@test.com',
+                'password' => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => '2021-07-09 20:19:13',
+            ],
+            [
+                'id' => '5',
+                'name' => 'Outlet3',
+                'role' => 'outlet',
+                'status' => 'non-active',
+                'gender' => 'Pria',
+                'phone' => '085767113554',
+                'avatar' => 'outlet.jpg',
+                'saldo' => 0,
+                'email' => 'outlet3@test.com',
+                'password' => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => '2021-07-09 20:19:13',
+            ],
+            [
+                'id' => '6',
+                'name' => 'Outlet4',
+                'role' => 'outlet',
+                'status' => 'non-active',
+                'gender' => 'Pria',
+                'phone' => '085767113554',
+                'avatar' => 'outlet.jpg',
+                'saldo' => 0,
+                'email' => 'outlet4@test.com',
+                'password' => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => '2021-07-09 20:19:13',
+            ],
+            [
+                'id' => '7',
+                'name' => 'Outlet5',
+                'role' => 'outlet',
+                'status' => 'non-active',
+                'gender' => 'Pria',
+                'phone' => '085767113554',
+                'avatar' => 'outlet.jpg',
+                'saldo' => 0,
+                'email' => 'outlet5@test.com',
+                'password' => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => '2021-07-09 20:19:13',
+            ],
+            [
+                'id' => '8',
+                'name' => 'Outlet6',
+                'role' => 'outlet',
+                'status' => 'non-active',
+                'gender' => 'Pria',
+                'phone' => '085767113554',
+                'avatar' => 'outlet.jpg',
+                'saldo' => 0,
+                'email' => 'outlet6@test.com',
+                'password' => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => '2021-07-09 20:19:13',
+            ],
+            [
+                'id' => '9',
+                'name' => 'Outlet7',
+                'role' => 'outlet',
+                'status' => 'non-active',
+                'gender' => 'Pria',
+                'phone' => '085767113554',
+                'avatar' => 'outlet.jpg',
+                'saldo' => 0,
+                'email' => 'outlet7@test.com',
+                'password' => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => '2021-07-09 20:19:13',
+            ],
+            [
+                'id' => '10',
+                'name' => 'Outlet8',
+                'role' => 'outlet',
+                'status' => 'non-active',
+                'gender' => 'Pria',
+                'phone' => '085767113554',
+                'avatar' => 'outlet.jpg',
+                'saldo' => 0,
+                'email' => 'outlet8@test.com',
+                'password' => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => '2021-07-09 20:19:13',
+            ],
+            [
+                'id' => '11',
+                'name' => 'Outlet9',
+                'role' => 'outlet',
+                'status' => 'non-active',
+                'gender' => 'Pria',
+                'phone' => '085767113554',
+                'avatar' => 'outlet.jpg',
+                'saldo' => 0,
+                'email' => 'outlet9@test.com',
+                'password' => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => '2021-07-09 20:19:13',
+            ],
+            [
+                'id' => '12',
+                'name' => 'Outlet10',
+                'role' => 'outlet',
+                'status' => 'non-active',
+                'gender' => 'Pria',
+                'phone' => '085767113554',
+                'avatar' => 'outlet.jpg',
+                'saldo' => 0,
+                'email' => 'outlet10@test.com',
+                'password' => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => '2021-07-09 20:19:13',
+            ],
+        ];
+        
+        foreach ($user as $key => $value) {
+           \App\Models\User::create($value);
+        }
+    }
+}
