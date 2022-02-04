@@ -15,35 +15,35 @@ class Transaction
         $this->paketData = $paketData;
     }
 
-    public function getAllData()
+    public function getAllData($id = 0)
     {
         // laravel merge collection
         $data = collect([
-            $this->pln->getAll(),
-            $this->pulsa->getAll(),
-            $this->paketData->getAll()
+            $this->pln->getAll($id),
+            $this->pulsa->getAll($id),
+            $this->paketData->getAll($id)
         ]);
         return $data;
     }
 
-    public function getAllDataByMonth()
+    public function getAllDataByMonth($id = 0)
     {
         // laravel merge collection
         $data = collect([
-            $this->pln->getByMonth(),
-            $this->pulsa->getByMonth(),
-            $this->paketData->getByMonth()
+            $this->pln->getByMonth($id),
+            $this->pulsa->getByMonth($id),
+            $this->paketData->getByMonth($id)
         ]);
         return $data;
     }
 
-    public function getAllDataByWeek()
+    public function getAllDataByWeek($id = 0)
     {
         // laravel merge collection
         $data = collect([
-            $this->pln->getByWeek(),
-            $this->pulsa->getByWeek(),
-            $this->paketData->getByWeek()
+            $this->pln->getByWeek($id),
+            $this->pulsa->getByWeek($id),
+            $this->paketData->getByWeek($id)
         ]);
         return $data;
     }
@@ -67,6 +67,20 @@ class Transaction
         $total_pln = $this->pln->getByWeek()->sum('price');
         $total_pulsa = $this->pulsa->getByWeek()->sum('price');
         $total_paket_data = $this->paketData->getByWeek()->sum('price');
+        $total_transaksi = $total_pln + $total_pulsa + $total_paket_data;
+        return (object)[
+            'total_pln' => $total_pln,
+            'total_pulsa' => $total_pulsa,
+            'total_paket_data' => $total_paket_data,
+            'total_transaksi' => $total_transaksi
+        ];
+    }
+
+    public function getTotalGroupBy()
+    {
+        $total_pln = $this->pln->getAllDataGroupBy();
+        $total_pulsa = $this->pulsa->getAllDataGroupBy();
+        $total_paket_data = $this->paketData->getAllDataGroupBy();
         $total_transaksi = $total_pln + $total_pulsa + $total_paket_data;
         return (object)[
             'total_pln' => $total_pln,

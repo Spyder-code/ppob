@@ -21,4 +21,9 @@ class PaketData extends Model
     {
         return $this->belongsTo(Provider::class, 'id_provider');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'outlet_id');
+    }
 }

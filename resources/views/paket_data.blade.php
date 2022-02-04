@@ -6,6 +6,7 @@
             background-color: rgb(218, 243, 103)
         }
     </style>
+    <link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.1.1/css/dataTables.dateTime.min.css">
 @endsection
 @section('title', 'Paket Data')
 @section('content')
@@ -118,6 +119,16 @@
                         </ul>
                             <div class="tab-content mt-4" id="myTabContent">
                                 <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
+                                    <table border="0" cellspacing="5" cellpadding="5">
+                                        <tbody><tr>
+                                            <td>Minimum date:</td>
+                                            <td><input type="text" id="min" name="min"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Maximum date:</td>
+                                            <td><input type="text" id="max" name="max"></td>
+                                        </tr>
+                                    </tbody></table>
                                     <div class="table-responsive">
                                         <table class="table" id="all">
                                             <thead>
@@ -144,7 +155,7 @@
                                                     <td>{{ $item->paket->nama_paket }}</td>
                                                     <td>{{ $item->provider->nama_provider }}</td>
                                                     <td>{{ $item->price }}</td>
-                                                    <td>{{ date('d/m/Y', strtotime($item->created_at)) }}</td>
+                                                    <td>{{ date('Y/m/d', strtotime($item->created_at)) }}</td>
                                                 </tr>
                                                 @php
                                                     $i++;
@@ -185,7 +196,7 @@
                                                     <td>{{ $item->paket->nama_paket }}</td>
                                                     <td>{{ $item->provider->nama_provider }}</td>
                                                     <td>{{ $item->price }}</td>
-                                                    <td>{{ date('d/m/Y', strtotime($item->created_at)) }}</td>
+                                                    <td>{{ date('Y/m/d', strtotime($item->created_at)) }}</td>
                                                 </tr>
                                                 @php
                                                     $i++;
@@ -226,7 +237,7 @@
                                                     <td>{{ $item->paket->nama_paket }}</td>
                                                     <td>{{ $item->provider->nama_provider }}</td>
                                                     <td>{{ $item->price }}</td>
-                                                    <td>{{ date('d/m/Y', strtotime($item->created_at)) }}</td>
+                                                    <td>{{ date('Y/m/d', strtotime($item->created_at)) }}</td>
                                                 </tr>
                                                 @php
                                                     $i++;
@@ -242,7 +253,7 @@
                                 </div>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </div>
@@ -256,9 +267,40 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdn.datatables.net/datetime/1.1.1/js/dataTables.dateTime.min.js"></script>
+
     <script>
+        var minDate, maxDate;
+        // Custom filtering function which will search data in column four between two values
+        $.fn.dataTable.ext.search.push(
+            function( settings, data, dataIndex ) {
+                var min = minDate.val();
+                var max = maxDate.val();
+                var date = new Date( data[6] );
+
+                if (
+                    ( min === null && max === null ) ||
+                    ( min === null && date <= max ) ||
+                    ( min <= date   && max === null ) ||
+                    ( min <= date   && date <= max )
+                ) {
+                    return true;
+                }
+                return false;
+            }
+        );
+
         $(document).ready(function() {
-            $('.table').DataTable({
+            // Create date inputs
+            minDate = new DateTime($('#min'), {
+                format: 'MMMM Do YYYY'
+            });
+            maxDate = new DateTime($('#max'), {
+                format: 'MMMM Do YYYY'
+            });
+
+            var table = $('.table').DataTable({
                 aLengthMenu: [
                     [25, 50, 100, 200, -1],
                     [25, 50, 100, 200, "All"]
@@ -271,8 +313,15 @@
                     }
                 ]
             });
+
+            // Refilter the table
+            $('#min, #max').on('change', function () {
+                table.draw();
+            });
+
         });
     </script>
+
     <script type="text/javascript">
         $(document).ready(function(){
             $("#form_purchase").submit(function(e) {

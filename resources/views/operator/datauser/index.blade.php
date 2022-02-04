@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Riwayat Transaksi Outlet '.($type==1?'Bulan ini': ($type==2?'Minggu ini':'')))
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
@@ -8,127 +8,122 @@
                     <div class="card-header">Data Riwayat Outlet</div>
 
                     <div class="card-body">
-                        
-                        <form method="GET" action="{{ route('operator.saldo.filter') }}">
-                            @csrf
-
-                            <div class="row ml-auto">
-
-                                <div class="col-lg-3">
-                                    <input id="name" type="text" class="form-control" name="name" min="0" value="{{ old('name') }}" autocomplete="name" placeholder="Nama" autofocus>
-                                </div>
-
-                                <div class="col-lg-3">
-                                    <input id="saldo" type="number" class="form-control" name="saldo" min="0" value="{{ old('saldo') }}" autocomplete="saldo" placeholder="Saldo" autofocus>
-                                </div>
-
-                                <button type="submit" class="btn btn-sm btn-primary col-lg-2 mb-1 mr-1" onclick="return confirm('Apakah Anda Yakin Ingin Mencari Data Ini?')">
-                                    {{ __('Search') }}
-                                </button>
-                                <button type="reset" class="btn btn-sm btn-danger col-lg-2 mb-1 mr-1">
-                                    {{ __('Reset') }}
-                                </button>
-
+                        <div class="flex justify-content-center">
+                            <div class="col-4">
+                                <label for="filter">Filer By:</label>
                             </div>
-
-                        </form>
-
+                            <div class="col">
+                                <select name="filter" id="filter" class="form-control">
+                                    <option {{ $type==0?'selected':'' }} value="0">Semua</option>
+                                    <option {{ $type==1?'selected':'' }} value="1">Bulan ini</option>
+                                    <option {{ $type==2?'selected':'' }} value="2">Minggu ini</option>
+                                </select>
+                            </div>
+                        </div>
                         <div class="table-responsive mt-3">
-                            <table class="table table-light table-hover">
+                            <table class="table table-stripped table-hover">
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>ID</th>
                                         <th>Nama</th>
-                                        <th>Email</th>
-                                        <th>Phone</th>
-                                        <th>Saldo</th>
-                                        <th>Password</th>
-                                        <th>Status</th>
+                                        <th>Total Transaksi Pulsa</th>
+                                        <th>Total Transaksi Paket Data</th>
+                                        <th>Total Transaksi PLN</th>
+                                        <th>Total Semua Transaksi</th>
+                                        <th>Reward didapat</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($users as $key)
-                                        <tr>
-                                            <th>{{ $loop->iteration + $users->firstItem() - 1 . '.' }}</th>
-                                            <td>{{ $key->id }}</td>
-                                            <td>{{ $key->name }}</td>
-                                            <td>{{ $key->email }}</td>
-                                            <td>
-                                                @if ($key->phone != NULL)
-                                                {{ $key->phone }}
-                                                @else
-                                                    Tidak diketahui!
+                                    @php
+                                        $total_transaksi_pulsa = 0;
+                                        $total_transaksi_paket_data = 0;
+                                        $total_transaksi_pln = 0;
+                                        $total_semua_transaksi = 0;
+                                        $total_reward = 0;
+                                    @endphp
+                                    @foreach ($data as $item)
+                                    <tr>
+                                        <th>{{ $loop->iteration }}</th>
+                                        <td>{{ $item->name }}</td>
+                                        <td>{{ __('Rp.').number_format($item->pulsa->sum('price'),2,',','.') }}</td>
+                                        <td>{{ __('Rp.').number_format($item->paketData->sum('price'),2,',','.') }}</td>
+                                        <td>{{ __('Rp.').number_format($item->pln->sum('price'),2,',','.') }}</td>
+                                        <td>{{ __('Rp.').number_format(($item->pln->sum('price')+$item->pulsa->sum('price')+$item->paketData->sum('price')),2,',','.') }}</td>
+                                        <td>Emas {{ $item->reward->sum('nominal') }} gram</td>
+                                        <td>
+                                            <form action="{{ route('operator.saldo.destroy', $item->id) }}" method="post">
+                                                @csrf
+                                                @method('delete')
+                                                <a href="{{ route('operator.transaction.history.outlet',$item->id) }}" class="btn btn-sm btn-warning mb-1 mr-1" onclick="return confirm('Apakah Anda Yakin Ingin Melihat Data Ini?')">Lihat</a>
+                                                @if ($item->phone != NULL)
+                                                <a href="https://wa.me/{{ $item->phone }}" target="_blank" class="btn btn-sm btn-success mb-1 mr-1" onclick="return confirm('Apakah Anda Yakin Ingin Menelpon?')">Hubungi</a>
                                                 @endif
-                                            </td>
-                                            <td>{{ __('Rp.').number_format($key->saldo,2,',','.') }}</td>
-                                            <td><span class="badge badge-danger">DILINDUNGI</span></td>
-                                            <td>
-                                                <a href="#" data-toggle="modal" data-target="#editStatus<?= $key->id; ?>" title='editStatus' class="btn btn-sm @if($key->status == 'active') btn-success @else btn-danger @endif">{{ $key->status }}</a>
-                                            </td>
-                                            <td>
-                                                <form action="{{ route('operator.saldo.destroy', $key->id) }}" method="post">
-                                                    @csrf
-                                                    @method('delete')
-                                                    <a href="{{ route('operator.saldo.edit',$key->id) }}" class="btn btn-sm btn-warning mb-1 mr-1" onclick="return confirm('Apakah Anda Yakin Ingin Melihat Data Ini?')">Lihat</a>
-                                                    @if ($key->phone != NULL)
-                                                    <a href="https://wa.me/{{ $key->phone }}" target="_blank" class="btn btn-sm btn-success mb-1 mr-1" onclick="return confirm('Apakah Anda Yakin Ingin Menelpon?')">Hubungi</a>
-                                                    @endif
-                                                    {{-- <button type="submit" onclick="return confirm('Apakah Anda Yakin Ingin Menghapus Data Ini?')"
-                                                        class="btn btn-sm btn-danger">Hapus
-                                                    </button> --}}
-                                                </form>
-                                            </td>
-                                        </tr>
-              
-                                        <div class="modal fade" id="editStatus<?= $key->id; ?>" tabindex="-1" aria-labelledby="editStatus" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="editJamKerjaModalLabel">Edit Status</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <form action="{{ route('operator.updateStatus', $key->id) }}" method="post">
-                                                            @method('PUT')
-                                                            @csrf
-
-                                                            <div class="form-group">
-                                                                <h5>Status</h5>
-                                                                <select name="status" id="status" class="form-control" required="required">
-                                                                    <option selected="true" value="{{ $key->status }}">{{ $key->status }}</option>
-                                                                    @if ($key->status == 'active')
-                                                                    <option value="non-active">non-active</option>
-                                                                    @else
-                                                                    <option value="active">active</option>
-                                                                    @endif
-                                                                </select>
-                                                                {{-- <input type="text" class="form-control" value="{{ $key->status;  }}" id="status" name="status" required="required"> --}}
-                                                            </div>
-
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                <button type="submit" class="btn btn-primary">Edit</button>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @empty
-                                        <tr>
-                                            <th colspan="6" class="text-danger text-center">Data Kosong!</th>
-                                        </tr>
-                                    @endforelse
+                                                {{-- <button type="submit" onclick="return confirm('Apakah Anda Yakin Ingin Menghapus Data Ini?')"
+                                                    class="btn btn-sm btn-danger">Hapus
+                                                </button> --}}
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    @php
+                                        $total_transaksi_pulsa += $item->pulsa->sum('price');
+                                        $total_transaksi_paket_data += $item->paketData->sum('price');
+                                        $total_transaksi_pln += $item->pln->sum('price');
+                                        $total_semua_transaksi += ($item->pln->sum('price')+$item->pulsa->sum('price')+$item->paketData->sum('price'));
+                                        $total_reward += $item->reward->sum('nominal');
+                                    @endphp
+                                    @endforeach
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th colspan="2" style="text-align:right">Total:</th>
+                                        <th>{{ __('Rp.').number_format($total_transaksi_pulsa,2,',','.') }}</th>
+                                        <th>{{ __('Rp.').number_format($total_transaksi_paket_data,2,',','.') }}</th>
+                                        <th>{{ __('Rp.').number_format($total_transaksi_pln,2,',','.') }}</th>
+                                        <th>{{ __('Rp.').number_format($total_semua_transaksi,2,',','.') }}</th>
+                                        <th>Emas {{ $total_reward }} gram</th>
+                                    </tr>
+                                </tfoot>
                             </table>
-                            {{ $users->links() }}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+@endsection
+
+@section('js')
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+<script>
+    $('#filter').change(function (e) {
+        e.preventDefault();
+        var val = $(this).val();
+        window.location.href = "{{ url('operator/riwayat-outlet/') }}" + "/" + val;
+    });
+
+    $(document).ready(function() {
+            var table = $('.table').DataTable({
+                aLengthMenu: [
+                    [25, 50, 100, 200, -1],
+                    [25, 50, 100, 200, "All"]
+                ],
+                iDisplayLength: 25,
+                dom: 'Bfrtip',
+                buttons:  [
+                    {
+                        extend: 'pdf', className: 'btn btn-success px-5', text: 'Print Data',exportOptions:
+                    {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                    }
+                    }
+                ]
+            });
+        });
+</script>
 @endsection

@@ -21,4 +21,9 @@ class Pln extends Model
     {
         return $this->belongsTo(NominalPln::class, 'id_paket_pln');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'outlet_id');
+    }
 }

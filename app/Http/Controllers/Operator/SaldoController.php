@@ -3,23 +3,31 @@
 namespace App\Http\Controllers\Operator;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Repository\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class SaldoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    private $transaction;
+    public function __construct(Transaction $transaction)
     {
-        return view('operator.datauser.index', [
-            'users' => \App\Models\User::orderBy('id', 'asc')
-            ->where('role', 'outlet')
-            ->paginate(5)
-        ]);
+        $this->transaction = $transaction;
+    }
+
+    public function index($type)
+    {
+        if ($type==0) {
+            $data = User::where('role','outlet')->with(['pln','pulsa','paketData','reward'])->get();
+        }else if($type==1){
+            $data = User::where('role','outlet')->with(['plnByMonth','pulsaByMonth','paketDataByMonth','rewardByMonth'])->get();
+        } else if($type==2){
+            $data = User::where('role','outlet')->with(['plnByWeek','pulsaByWeek','paketDataByWeek','rewardByWeek'])->get();
+        }else{
+            return abort(404);
+        }
+        return view('operator.datauser.index', compact('data','type'));
     }
 
     public function filter(Request $request)
@@ -28,9 +36,9 @@ class SaldoController extends Controller
         $saldo = $request->saldo;
 
         // dd($request);
-        
+
         if ($name == null) {
-            
+
             $users = \App\Models\User::orderBy('saldo', 'desc')
             ->where('role', 'outlet')
             ->where('saldo','like',"%".$saldo."%")
@@ -38,7 +46,7 @@ class SaldoController extends Controller
             ->paginate(5);
 
         } elseif ($saldo == null) {
-            
+
             $users = \App\Models\User::orderBy('saldo', 'desc')
             ->where('role', 'outlet')
             ->where('name','like',"%".$name."%")
@@ -46,7 +54,7 @@ class SaldoController extends Controller
             ->paginate(5);
 
         } elseif ($name != null && $saldo != null) {
-            
+
             $users = \App\Models\User::orderBy('saldo', 'desc')
             ->where('role', 'outlet')
             ->where('name','like',"%".$name."%")
@@ -55,17 +63,22 @@ class SaldoController extends Controller
             ->paginate(5);
 
         } else {
-            
+
             $users = \App\Models\User::orderBy('saldo', 'desc')
             ->where('role', 'outlet')
             ->paginate(5);
 
         }
-        
-        
+
+
         return view('operator.datauser.index', compact('users'));
     }
-    
+
+    public function updateStatusUser(Request $request, User $user)
+    {
+        User::find($user->id)->update($request->all());
+        return back()->with('success', 'Status User Berhasil Diubah');
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -123,7 +136,7 @@ class SaldoController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'saldoPlus' => 'required|numeric', 
+            'saldoPlus' => 'required|numeric',
         ]);
 
         $user = \App\Models\User::find($id);

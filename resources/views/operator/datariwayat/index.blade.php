@@ -6,13 +6,22 @@
 
 @section('content')
     <div class="container">
+        @if (session('success'))
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-success" role="alert">
+                        {{ session('success') }}
+                    </div>
+                </div>
+            </div>
+        @endif
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
                             <div class="col-sm-6">
-                                <h5>Data Riwayat Transaksi</h5>
+                                <h5>Data Riwayat Saldo Outlet</h5>
                             </div>
                             @if ($name == null && $saldo == null)
                                 <div class="col-sm-6">
@@ -69,23 +78,32 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>ID</th>
                                         <th>Nama</th>
                                         <th>Saldo</th>
-                                        <th>Total Transaksi</th>
+                                        <th>Total Isi Ulang</th>
                                         <th>Total Top Up</th>
+                                        <th>Status</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse ($users as $key)
                                         <tr>
-                                            <th>{{ $loop->iteration + $users->firstItem() - 1 . '.' }}</th>
-                                            <td>{{ $key->id }}</td>
+                                            <th>{{ $loop->iteration }}</th>
                                             <td>{{ $key->name }}</td>
                                             <td>{{ __('Rp.').number_format($key->saldo,2,',','.') }}</td>
                                             <td>{{ $key->total.__(' x') }}</td>
                                             <td>{{ __('Rp.').number_format($key->total_topup,2,',','.') }}</td>
+                                            <td>
+                                                <form action="{{ route('operator.updateStatusUser',$key) }}" method="post">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <select name="status" onchange="submit()" id="status" class="form-control border {{ $key->status=='active'?'border-success':'border-danger' }}">
+                                                        <option {{ $key->status=='active'?'selected':'' }} value="active">Aktif</option>
+                                                        <option {{ $key->status=='non-active'?'selected':'' }} value="non-active">Non Aktif</option>
+                                                    </select>
+                                                </form>
+                                            </td>
                                             <td>
                                                 <a href="{{ route('operator.riwayat.edit',$key->id) }}" class="btn btn-sm btn-primary mb-1 mr-1" onclick="return confirm('Apakah Anda Yakin Ingin Melihat Data Ini?')">Lihat</a>
                                             </td>

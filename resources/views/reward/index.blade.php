@@ -1,6 +1,12 @@
 @extends('layouts.frontend')
 @section('title', 'Rewards')
 @section('content')
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <div class="row">
         <div class="col-xl-12">
             <div class="card">
@@ -43,12 +49,15 @@
                             @elseif ($type==3)
                                 <strong class="text-success">Selamat Total transaksi anda sudah mencapai jumlah minimal pencapaian ketiga. Anda berhak mendapat Logam Emas 3 gram</strong><br>
                                 <span>Anda dapat mengambil reward sekarang atau dapat menunggu sampai akhir bulan</span>
+                            @elseif ($type==4)
+                                <strong class="text-success">Anda sudah mengambil reward</strong><br>
+                                <span>Ayo tingkatkan lagi pencapaian transaksi dibulan berikutnya untuk mengambil reward lagi</span>
                             @endif
                         </div>
-                        <form action="" method="post">
+                        <form action="{{ route('reward.ambil') }}" method="post">
                             @csrf
-                            <input type="hidden" name="type" value="{{ $type }}">
-                            <button type="submit" class="btn btn-success w-100" {{ $type==0?'disabled':'' }}>Ambil Reward</button>
+                            @method('PUT')
+                            <button type="submit" class="btn btn-success w-100"  onclick="return confirm('are you sure?')" {{ $type==0 || $type==4?'disabled':'' }}>Ambil Reward</button>
                         </form>
                     </div>
                 </div>

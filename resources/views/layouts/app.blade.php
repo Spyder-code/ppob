@@ -7,13 +7,13 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'PPOB') }}</title>
+    <title>{{ config('app.name', 'PPOB') }} | @yield('title')</title>
 
     <!-- Icon -->
     <link rel="shortcut icon" href="{{URL::asset('images')}}/icon1.png" />
 
     <!-- Scripts -->
-    <script src="{{ URL::asset('js/app.js') }}" defer></script>
+    <script src="{{ URL::asset('js/app.js') }}"></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -21,7 +21,7 @@
 
     <!-- Styles -->
     <link href="{{ URL::asset('css/app.css') }}" rel="stylesheet">
-
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.css">
     @stack('css')
 
 </head>
@@ -32,13 +32,13 @@
                 <a class="navbar-brand" href="{{ url('/') }}">
                     <b>{{ config('app.name', 'Laravel') }}</b>
                 </a>
-                
+
                 {{-- @auth
                     <a class="navbar-brand" href="{{ route('home') }}">Home</a>
                     <a class="navbar-brand" href="#">DataPembelian</a>
                     <a class="navbar-brand" href="{{ route('admin.product.index') }}">DataProduk</a>
                     <a class="navbar-brand" href="{{ route('admin.model.index') }}">DataModel</a>
-                    
+
                     @if (auth()->user()->role == 'admin')
                     <a class="navbar-brand" href="{{ route('admin.pegawai') }}">Data Pegawai</a>
                     <a class="navbar-brand" href="{{ route('admin.outlet') }}">Data Outlet</a>
@@ -82,7 +82,7 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    
+
                                     @if (auth()->user()->role == 'admin')
                                     <a class="dropdown-item" href="{{ route('home') }}">Home</a>
                                     <a class="dropdown-item" href="{{ route('admin.pegawai') }}">{{ __('Data Pegawai') }}</a>
@@ -96,8 +96,9 @@
                                     @if (auth()->user()->role == 'operator')
                                     <a class="dropdown-item" href="{{ route('home') }}">Home</a>
                                     <hr>
-                                    <a class="dropdown-item" href="{{ route('operator.saldo') }}">{{ __('Data Riwayat Outlet') }}</a>
-                                    <a class="dropdown-item" href="{{ route('operator.riwayat') }}">{{ __('Data Riwayat Transaksi') }}</a>
+                                    <a class="dropdown-item" href="{{ route('operator.saldo',0) }}">{{ __('Data Riwayat Outlet') }}</a>
+                                    <a class="dropdown-item" href="{{ route('operator.riwayat') }}">{{ __('Data Riwayat Saldo') }}</a>
+                                    <a class="dropdown-item" href="{{ route('operator.transaction.history') }}">{{ __('Data Riwayat Transaksi') }}</a>
                                     <a class="dropdown-item" href="{{ route('operator.request-saldo.index') }}">{{ __('Data Pengajuan Saldo') }}</a>
                                     @endif
 
@@ -113,9 +114,9 @@
                                     <hr>
                                     <a class="dropdown-item" href="{{ route('admin.setting-website') }}">{{ __('Setting Website') }}</a>
                                     @endif
-                                    
+
                                     <hr>
-                                    
+
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -144,8 +145,9 @@
             @yield('content')
         </main>
     </div>
-    
-    @stack('js')
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+    @yield('js')
 
 </body>
 </html>

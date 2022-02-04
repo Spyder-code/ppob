@@ -36,24 +36,25 @@ Route::group(['middleware' => ['auth:web']], function () {
     Route::post('post-request-saldo', [App\Http\Controllers\RequestSaldoController::class, 'create'])->name('request-saldo.create');
 
     Route::resource('reward', App\Http\Controllers\RewardController::class);
+    Route::put('ambil-reward', [App\Http\Controllers\RewardController::class, 'ambilReward'])->name('reward.ambil');
 
     Route::group(['middleware' => ['admin']], function () {
 
         Route::get('/admin/home', [App\Http\Controllers\Admin\DashboardController::class, 'admin'])->name('admin.home');
-        
+
         Route::get('/admin/data-pulsa', [App\Http\Controllers\Admin\PulsaController::class, 'index'])->name('admin.data-pulsa');
         Route::delete('/admin/data-pulsa/{id}/destroy', [App\Http\Controllers\Admin\PulsaController::class, 'destroy'])->name('admin.data-pulsa.destroy');
         Route::get('/admin/data-pulsa/harga/{id}', [App\Http\Controllers\Admin\PulsaController::class, 'editprice'])->name('admin.data-pulsa.editprice');
         Route::put('/admin/data-pulsa/harga/{id}', [App\Http\Controllers\Admin\PulsaController::class, 'updateprice'])->name('admin.data-pulsa.updateprice');
         Route::get('/admin/data-pulsa/provider/{id}', [App\Http\Controllers\Admin\PulsaController::class, 'editprovider'])->name('admin.data-pulsa.editprovider');
         Route::put('/admin/data-pulsa/provider/{id}', [App\Http\Controllers\Admin\PulsaController::class, 'updateprovider'])->name('admin.data-pulsa.updateprovider');
-        
+
         Route::get('/admin/data-paket', [App\Http\Controllers\Admin\PaketDataController::class, 'index'])->name('admin.data-paket');
         Route::delete('/admin/data-paket/{id}/destroy', [App\Http\Controllers\Admin\PaketDataController::class, 'destroy'])->name('admin.data-paket.destroy');
-        
+
         Route::get('/admin/data-pln', [App\Http\Controllers\Admin\PlnController::class, 'index'])->name('admin.data-pln');
         Route::delete('/admin/data-pln/{id}/destroy', [App\Http\Controllers\Admin\PlnController::class, 'destroy'])->name('admin.data-pln.destroy');
-        
+
         // Route::resource('/setting-website', App\Http\Controllers\Admin\SettingWebsiteController::class);
         Route::get('/admin/setting-website', [App\Http\Controllers\SettingWebsiteController::class, 'index'])->name('admin.setting-website');
         Route::put('/admin/post-setting-website', [App\Http\Controllers\SettingWebsiteController::class, 'update'])->name('admin.setting-website.update');
@@ -72,19 +73,22 @@ Route::group(['middleware' => ['auth:web']], function () {
     Route::group(['middleware' => ['operator']], function () {
 
         // Route::get('/data-outlet', [App\Http\Controllers\Operator\DashboardController::class, 'outlet'])->name('operator.outlet');
-        Route::get('/operator/data-saldo', [App\Http\Controllers\Operator\SaldoController::class, 'index'])->name('operator.saldo');
+        Route::get('/operator/riwayat-outlet/{type}', [App\Http\Controllers\Operator\SaldoController::class, 'index'])->name('operator.saldo');
+        Route::get('/operator/riwayat-transaksi', [App\Http\Controllers\Operator\DashboardController::class, 'transactionHistory'])->name('operator.transaction.history');
+        Route::get('/operator/riwayat-transaksi/{id}', [App\Http\Controllers\Operator\DashboardController::class, 'transactionHistoryOutlet'])->name('operator.transaction.history.outlet');
         Route::get('/operator/data-saldo/filter', [App\Http\Controllers\Operator\SaldoController::class, 'filter'])->name('operator.saldo.filter');
         Route::delete('/operator/{user}/destroy', [App\Http\Controllers\Operator\SaldoController::class, 'destroy'])->name('operator.saldo.destroy');
         Route::get('/operator/data-saldo/{user}', [App\Http\Controllers\Operator\SaldoController::class, 'edit'])->name('operator.saldo.edit');
         Route::put('/operator/{user}', [App\Http\Controllers\Operator\SaldoController::class, 'update'])->name('operator.saldo.update');
         Route::put('/operator/status/{id}', [App\Http\Controllers\Operator\SaldoController::class, 'updateStatus'])->name('operator.updateStatus');
+        Route::put('/operator/update-status/{user}', [App\Http\Controllers\Operator\SaldoController::class, 'updateStatusUser'])->name('operator.updateStatusUser');
 
         Route::get('/operator/data-riwayat-isi-saldo', [App\Http\Controllers\Operator\RiwayatSaldoController::class, 'index'])->name('operator.riwayat');
         Route::get('/operator/data-riwayat-isi-saldo/filter', [App\Http\Controllers\Operator\RiwayatSaldoController::class, 'filter'])->name('operator.riwayat.filter');
         Route::get('/operator/data-riwayat-isi-saldo/{user}', [App\Http\Controllers\Operator\RiwayatSaldoController::class, 'edit'])->name('operator.riwayat.edit');
         Route::get('/operator/print', [App\Http\Controllers\Operator\RiwayatSaldoController::class, 'print'])->name('operator.print');
         Route::get('/operator/print/filter', [App\Http\Controllers\Operator\RiwayatSaldoController::class, 'printFilter'])->name('operator.print.filter');
-        
+
         Route::get('operator/request-saldo', [App\Http\Controllers\Operator\RequestSaldoController::class, 'index'])->name('operator.request-saldo.index');
         Route::get('operator/request-saldo/filter', [App\Http\Controllers\Operator\RequestSaldoController::class, 'filter'])->name('operator.request-saldo.filter');
         Route::get('operator/request-saldo/{id}/edit', [App\Http\Controllers\Operator\RequestSaldoController::class, 'edit'])->name('operator.request-saldo.edit');

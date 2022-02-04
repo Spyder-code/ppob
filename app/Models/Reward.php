@@ -12,6 +12,8 @@ class Reward extends Model
     protected $fillable = [
         'outlet_id',
         'reward',
+        'nominal',
+        'status',
     ];
 
     public function outlet()
