@@ -18,6 +18,7 @@ class CreateRewardsTable extends Migration
             $table->foreignId('outlet_id')->constrained('users');
             $table->text('reward');
             $table->boolean('status')->default(0);
+            $table->float('nominal');
             $table->timestamps();
         });
     }

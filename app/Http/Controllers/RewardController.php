@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reward;
+use App\Models\RiwayatSaldo;
 use App\Repository\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +20,7 @@ class RewardController extends Controller
     public function index()
     {
         $transaction = $this->transaction->getTotalByMonth();
+        $total = RiwayatSaldo::where('user_id', Auth::id())->whereMonth('created_at', date('m'))->sum('saldoPlus');
         $data = Reward::all()->where('outlet_id', Auth::id())->where('status', 1);
         $reward = Reward::whereMonth('created_at', date('m'))->where('outlet_id', Auth::id())->where('status',0)->first();
         if ($reward!=null) {
@@ -37,7 +39,7 @@ class RewardController extends Controller
                 $type = 0;
             }
         }
-        return view('reward.index', compact('data','transaction','type'));
+        return view('reward.index', compact('data','transaction','type','total'));
     }
 
     public function ambilReward()

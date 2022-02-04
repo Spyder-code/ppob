@@ -34,7 +34,7 @@
                 <div class="card-body row">
                     <div class="col-4 text-center">
                         <strong style="font-size: 1.4rem">Total Transaksi Saya Bulan ini:</strong>
-                        <p style="font-size: 1.2rem">Rp.{{ number_format($transaction->total_transaksi,2,',','.') }}</p>
+                        <p style="font-size: 1.2rem">Rp.{{ number_format($total,2,',','.') }}</p>
                     </div>
                     <div class="col-8">
                         <div class="alert">

@@ -36,7 +36,7 @@ class HomeController extends Controller
             return redirect()->route('landingpage');
         }
     }
-    
+
     public function history()
     {
         $all = $this->transaksi->getAllData();

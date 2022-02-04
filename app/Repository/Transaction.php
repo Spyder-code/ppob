@@ -2,6 +2,9 @@
 
 namespace App\Repository;
 
+use App\Models\RiwayatSaldo;
+use Illuminate\Support\Facades\Auth;
+
 class Transaction
 {
     private $pln;
@@ -88,5 +91,12 @@ class Transaction
             'total_paket_data' => $total_paket_data,
             'total_transaksi' => $total_transaksi
         ];
+    }
+
+    // get Saldo History By Month
+    public function getSaldoHistoryByMonth()
+    {
+        $data = RiwayatSaldo::where('outlet_id', Auth::id())->whereMonth('created_at', date('m'))->get();
+        return $data;
     }
 }

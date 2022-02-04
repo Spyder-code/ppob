@@ -55,7 +55,13 @@ class PaketDataController extends Controller
                 'updated_at'            => date('Y-m-d H:i:s'),
             ];
             $beliPulsa = DB::table('table_paket_data')->insert($insertPulsa);
-            $saldo = Auth::guard('web')->user()->saldo;
+            $saldo = Auth::user()->saldo;
+            if($saldo < $harga_paket){
+                $data['code']    = 500;
+                $data['message'] = 'Maaf ada saldo tidak mencukupi!';
+                // var_dump($e);
+                return response()->json($data);
+            }
             $saldoNow = $saldo - $harga_paket;
             $user = DB::table('users')->where('id',auth()->user()->id);
             $user->update([
@@ -66,34 +72,6 @@ class PaketDataController extends Controller
             DB::commit();
             $data['code']    = 200;
             $data['message'] = 'Berhasil Isi Ulang Paket Data ke nomor : '.$request->phone_number.'!';
-
-            $transaction = $this->jumlahTransaksi->getTotalByMonth();
-            $reward = Reward::whereMonth('created_at', date('m'))->where('outlet_id', Auth::id())->first();
-            $total = $transaction->total_transaksi;
-            if($total >= 30000000 && $total < 65000000){
-                if ($reward == null) {
-                    Reward::create([
-                        'outlet_id' => Auth::id(),
-                        'reward' => 'Emas 0.5 gram',
-                        'status' => 0,
-                        'nominal' => 0.5,
-                    ]);
-                }
-            }else if($total >= 65000000 && $total < 130000000){
-                if ($reward != null) {
-                    Reward::find($reward->id)->update([
-                        'reward' => 'Emas 1 gram',
-                        'nominal' => 1,
-                    ]);
-                }
-            }else if($total >= 130000000){
-                if ($reward != null) {
-                    Reward::find($reward->id)->update([
-                        'reward' => 'Emas 3 gram',
-                        'nominal' => 3,
-                    ]);
-                }
-            }
 
             return response()->json($data);
 
