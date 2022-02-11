@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\RiwayatSaldo;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -7,15 +8,40 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-// Route::get('/', function(){
+Route::get('/', function(){
+    $user = User::all()->where('role','outlet');
+    foreach ($user as $item ) {
 
-// });
+        for ($i=0; $i < 5; $i++) {
+            $rand = rand(1,3);
+            if($rand == 1){
+                $saldo = 300000000;
+            }else if($rand == 2){
+                $saldo = 200000000;
+            }else{
+                $saldo = 100000000;
+            }
+            RiwayatSaldo::create([
+                'user_id' => $item->id,
+                'saldoAfter' => $item->saldo,
+                'saldoPlus' => $saldo,
+                'saldoNow' => $item->saldo + $saldo,
+                'created_at' => '2021-12-0'.$i.' 20:20:41',
+            ]);
+
+            $total = RiwayatSaldo::where('user_id',$item->id)->sum('saldoPlus');
+            $item->update([
+                'saldo' => $total,
+            ]);
+        }
+    }
+});
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::group(['middleware' => ['auth:web']], function () {
 
-    Route::get('/', [App\Http\Controllers\DashboardController::class, 'index'])->name('landingpage');
+    // Route::get('/', [App\Http\Controllers\DashboardController::class, 'index'])->name('landingpage');
     Route::get('/riwayat', [App\Http\Controllers\HomeController::class, 'history'])->name('history');
 
     Route::get('/pulsa', [App\Http\Controllers\PulsaController::class, 'index']);
@@ -88,8 +114,8 @@ Route::group(['middleware' => ['auth:web']], function () {
         Route::put('/operator/status/{id}', [App\Http\Controllers\Operator\SaldoController::class, 'updateStatus'])->name('operator.updateStatus');
         Route::put('/operator/update-status/{user}', [App\Http\Controllers\Operator\SaldoController::class, 'updateStatusUser'])->name('operator.updateStatusUser');
 
-        Route::get('/operator/data-riwayat-isi-saldo', [App\Http\Controllers\Operator\RiwayatSaldoController::class, 'index'])->name('operator.riwayat');
-        Route::get('/operator/data-riwayat-isi-saldo/filter', [App\Http\Controllers\Operator\RiwayatSaldoController::class, 'filter'])->name('operator.riwayat.filter');
+        Route::get('/operator/data-riwayat-isi-saldo/{type}', [App\Http\Controllers\Operator\RiwayatSaldoController::class, 'index'])->name('operator.riwayat');
+        Route::post('/operator/data-riwayat-isi-saldo/filter', [App\Http\Controllers\Operator\RiwayatSaldoController::class, 'filter'])->name('operator.riwayat.filter');
         Route::get('/operator/data-riwayat-isi-saldo/{user}', [App\Http\Controllers\Operator\RiwayatSaldoController::class, 'edit'])->name('operator.riwayat.edit');
         Route::get('/operator/print', [App\Http\Controllers\Operator\RiwayatSaldoController::class, 'print'])->name('operator.print');
         Route::get('/operator/print/filter', [App\Http\Controllers\Operator\RiwayatSaldoController::class, 'printFilter'])->name('operator.print.filter');

@@ -97,7 +97,7 @@
                                     <a class="dropdown-item" href="{{ route('home') }}">Home</a>
                                     <hr>
                                     <a class="dropdown-item" href="{{ route('operator.saldo',0) }}">{{ __('Data Riwayat Outlet') }}</a>
-                                    <a class="dropdown-item" href="{{ route('operator.riwayat') }}">{{ __('Data Riwayat Saldo') }}</a>
+                                    <a class="dropdown-item" href="{{ route('operator.riwayat',0) }}">{{ __('Data Riwayat Saldo') }}</a>
                                     <a class="dropdown-item" href="{{ route('operator.transaction.history') }}">{{ __('Data Riwayat Transaksi') }}</a>
                                     <a class="dropdown-item" href="{{ route('operator.request-saldo.index') }}">{{ __('Data Pengajuan Saldo') }}</a>
                                     @endif

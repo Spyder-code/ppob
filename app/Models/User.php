@@ -59,6 +59,11 @@ class User extends Authenticatable
         return $this->belongsTo('App\Models\RequestSaldo');
     }
 
+    public function saldoR()
+    {
+        return $this->hasMany(RiwayatSaldo::class,'user_id');
+    }
+
     public function reward()
     {
         return $this->hasMany(Reward::class,'outlet_id');
@@ -77,6 +82,11 @@ class User extends Authenticatable
     public function paketData()
     {
         return $this->hasMany(PaketData::class, 'outlet_id');
+    }
+
+    public function saldoByMonth()
+    {
+        return $this->saldoR()->whereMonth('created_at', date('m'));
     }
 
     public function plnByMonth()
@@ -99,6 +109,21 @@ class User extends Authenticatable
         return $this->reward()->whereMonth('created_at', date('m'));
     }
 
+    public function saldoByWeek()
+    {
+        return $this->saldoR()->whereBetween('created_at', [
+            \Carbon\Carbon::now()->startOfWeek(),
+            \Carbon\Carbon::now()->endOfWeek()
+        ]);
+    }
+
+    public function saldoByFilter($from,$to)
+    {
+        return $this->saldoR()->whereBetween('created_at', [
+            $from,
+            $to
+        ]);
+    }
     public function pulsaByWeek()
     {
         // laravel where clause by week

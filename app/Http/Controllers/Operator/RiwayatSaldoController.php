@@ -11,96 +11,35 @@ use Illuminate\Support\Facades\DB;
 
 class RiwayatSaldoController extends Controller
 {
-    public function index(Request $request)
+    public function index($type)
     {
-        $link = url('/operator/print');
-        $name = $request->name;
-        $saldo = $request->saldo;
-        $users = \App\Models\User::where('role', 'outlet')
-        // ->orderBy('name', 'desc')
-        ->paginate(5);
-        foreach ($users as $key) {
-            $key->total = \App\Models\RiwayatSaldo::where('user_id', $key->id)
-            ->count();
-            $key->total_topup = \App\Models\RiwayatSaldo::where('user_id', $key->id)
-            ->orderBy('saldoPlus', 'desc')
-            // ->where(date('Y-m', strtotime('created_at')), date('Y-m'))
-            ->sum('saldoPlus');
-            // foreach ($key->total_topup as $total_topup) {
-            //     $total_topup->created_at->date_format('Y-m') == date('Y-m');
-            // }
+        if($type==0){
+            $users = User::where('role', 'outlet')->with(['saldoR'])->get();
+        }else if($type==1){
+            $users = User::where('role', 'outlet')->with(['saldoByMonth'])->get();
+        }else if($type==2){
+            $users = User::where('role', 'outlet')->with(['saldoByWeek'])->get();
         }
-        // dd($users);
-        return view('operator.datariwayat.index', compact('users', 'link', 'name', 'saldo'));
+        return view('operator.datariwayat.index', compact('users', 'type'));
     }
 
     public function filter(Request $request)
     {
-        $link = url('/operator/print/filter');
-        $name = $request->name;
-        $saldo = $request->saldo;
-
-        // dd($request);
-
-        if ($name == null) {
-
-            $users = \App\Models\User::orderBy('saldo', 'desc')
-            ->where('role', 'outlet')
-            ->where('saldo','like',"%".$saldo."%")
-            // ->orderBy('created_at', 'desc')
-            ->paginate(5);
-            foreach ($users as $key) {
-                $key->total = \App\Models\RiwayatSaldo::where('user_id', $key->id)
-                ->count();
-                $key->total_topup = \App\Models\RiwayatSaldo::where('user_id', $key->id)
-                ->sum('saldoPlus');
-            }
-
-        } elseif ($saldo == null) {
-
-            $users = \App\Models\User::orderBy('saldo', 'desc')
-            ->where('role', 'outlet')
-            ->where('name','like',"%".$name."%")
-            // ->orderBy('created_at', 'desc')
-            ->paginate(5);
-            foreach ($users as $key) {
-                $key->total = \App\Models\RiwayatSaldo::where('user_id', $key->id)
-                ->count();
-                $key->total_topup = \App\Models\RiwayatSaldo::where('user_id', $key->id)
-                ->sum('saldoPlus');
-            }
-
-        } elseif ($name != null && $saldo != null) {
-
-            $users = \App\Models\User::orderBy('saldo', 'desc')
-            ->where('role', 'outlet')
-            ->where('name','like',"%".$name."%")
-            ->where('saldo','like',"%".$saldo."%")
-            ->orderBy('created_at', 'desc')
-            ->paginate(5);
-            foreach ($users as $key) {
-                $key->total = \App\Models\RiwayatSaldo::where('user_id', $key->id)
-                ->count();
-                $key->total_topup = \App\Models\RiwayatSaldo::where('user_id', $key->id)
-                ->sum('saldoPlus');
-            }
-
-        } else {
-
-            $users = \App\Models\User::orderBy('saldo', 'desc')
-            ->where('role', 'outlet')
-            ->paginate(5);
-            foreach ($users as $key) {
-                $key->total = \App\Models\RiwayatSaldo::where('user_id', $key->id)
-                ->count();
-                $key->total_topup = \App\Models\RiwayatSaldo::where('user_id', $key->id)
-                ->sum('saldoPlus');
-            }
-
+        $type = 3;
+        $from = $request->from;
+        $to = $request->to;
+        // laravel get data by date between
+        $users = User::where('role', 'outlet')->with(['saldoR'])->get();
+        if($from != null && $to != null){
+            $users = User::where('role', 'outlet')->with(['saldoR'=> function($q) use($from, $to) {
+                // Query the name field in status table
+                    $q->whereBetween('created_at', [$from, $to]);
+                }])
+            ->get();
+        }else{
+            $type = 0;
         }
-
-
-        return view('operator.datariwayat.index', compact('users', 'link', 'name', 'saldo'));
+        return view('operator.datariwayat.index', compact('users', 'type','from','to'));
     }
 
     public function print()
