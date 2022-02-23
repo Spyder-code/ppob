@@ -114,7 +114,7 @@ Route::group(['middleware' => ['auth:web']], function () {
         Route::put('/operator/status/{id}', [App\Http\Controllers\Operator\SaldoController::class, 'updateStatus'])->name('operator.updateStatus');
         Route::put('/operator/update-status/{user}', [App\Http\Controllers\Operator\SaldoController::class, 'updateStatusUser'])->name('operator.updateStatusUser');
 
-        Route::get('/operator/data-riwayat-isi-saldo/{type}', [App\Http\Controllers\Operator\RiwayatSaldoController::class, 'index'])->name('operator.riwayat');
+        Route::get('/operator/data-riwayat-saldo/{type}', [App\Http\Controllers\Operator\RiwayatSaldoController::class, 'index'])->name('operator.riwayat');
         Route::post('/operator/data-riwayat-isi-saldo/filter', [App\Http\Controllers\Operator\RiwayatSaldoController::class, 'filter'])->name('operator.riwayat.filter');
         Route::get('/operator/data-riwayat-isi-saldo/{user}', [App\Http\Controllers\Operator\RiwayatSaldoController::class, 'edit'])->name('operator.riwayat.edit');
         Route::get('/operator/print', [App\Http\Controllers\Operator\RiwayatSaldoController::class, 'print'])->name('operator.print');

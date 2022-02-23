@@ -123,7 +123,7 @@
         $('#filter').change(function (e) {
             e.preventDefault();
             var val = $(this).val();
-            window.location.href = "{{ url('operator/data-riwayat-isi-saldo') }}" + "/" + val;
+            window.location.href = "{{ url('operator/data-riwayat-saldo') }}" + "/" + val;
         });
 
         var minDate, maxDate;
@@ -164,7 +164,9 @@
                 dom: 'Bfrtip',
                 buttons:  [
                     {
-                        extend: 'pdf', className: 'btn btn-success px-5', text: 'Print Data'
+                        extend: 'pdf', className: 'btn btn-success px-5', text: 'Print Data', exportOptions: {
+                            columns: [ 0, 1, 2, 3, 4 ]
+                        }
                     }
                 ]
             });
